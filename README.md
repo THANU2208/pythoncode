@@ -1,25 +1,78 @@
-# pythoncode
-#Automated Coffee Machine Using Python
+Menu={
+    "Latte":{
+        "ingredients":{
+           "water": 200,
+           "milk" : 150,
+           "coffee" : 24,
+    },
+    "cost":150
+  },
+"Espresso":{
+    "ingredients":{
+        "water": 50,
+        "coffee" : 18,
+    },
+    "cost":100,
+  },
+"Cappucino":{
+    "ingredients":{
+        "water": 250,
+        "milk" : 100,
+        "coffee" : 24,
+    },
+    "cost":200,
+  }
+}
+profit=0
+resources = {
+    "water":500,
+    "milk":200,
+    "coffee":100,
+}
 
-# Program to add two matrices using nested loop
-
-X = [[12,7,3],
-    [4 ,5,6],
-    [7 ,8,9]]
-
-Y = [[5,8,1],
-    [6,7,3],
-    [4,5,9]]
-
-result = [[0,0,0],
-         [0,0,0],
-         [0,0,0]]
-
-# iterate through rows
-for i in range(len(X)):
-   # iterate through columns
-   for j in range(len(X[0])):
-       result[i][j] = X[i][j] + Y[i][j]
-
-for r in result:
-   print(r)
+def check_resources(order_ingredients):
+    for item in order_ingredients:
+        if order_ingredients[item]>resources[item]:
+            print(f"Sorry there is not enough {item}")
+            return False
+    return True
+def process_coins():
+    print("Please insert coins.")
+    total=0
+    coins_five=int(input("How many 5rs coin?: "))
+    coins_ten=int(input("How many 10rs coin?: "))
+    coins_twenty=int(input("How many 20rs coin?: "))
+    total=coins_five*5 + coins_ten*10 + coins_twenty*20
+    return total
+def is_payment_successful(money_received,coffee_cost):
+    if money_received>=coffee_cost:
+        global profit
+        profit += coffee_cost
+        change=money_received-coffee_cost
+        print(f"Here is your Rs{change} in change.")
+        return True
+    else:
+        print("Sorry that's not enough money. Money refunded.")
+        return False
+def make_coffee(coffee_name,coffee_ingredients):
+    for item in coffee_ingredients:
+        resources[item] -= coffee_ingredients[item]
+    print(f"Here is your {coffee_name}☕.. Enjoy!!")    
+    
+is_on=True
+while is_on:
+    choice=input("What would you like to have? (Latte/Espresso/Cappucino): ")
+    if choice =="off":
+        is_on=False
+    elif choice=="report":
+        print(f"Water={resources['water']}ml")
+        print(f"Milk={resources['milk']}ml")
+        print(f"Coffee={resources['coffee']}g")
+        print(f"Money=Rs{profit}")
+    else:
+        coffee_type=Menu[choice]
+        print(coffee_type)
+        if check_resources(coffee_type['ingredients']):
+            payment = process_coins()
+            if is_payment_successful(payment,coffee_type['cost']):
+                make_coffee(choice,coffee_type['ingredients'])
